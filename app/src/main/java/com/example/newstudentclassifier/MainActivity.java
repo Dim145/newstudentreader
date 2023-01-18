@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action))
         {
             // Récupération des données NFC
-            Tag tag = intent.getParcelableExtra("android.nfc.extra.TAG");
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             String message = new String(tag.getId(), StandardCharsets.UTF_8);
 
             if (!db.checkUser(message))
