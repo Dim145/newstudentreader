@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
             if (!db.checkUser(message))
             {
-                textView.setText("Entrez votre nom pls");
+                textView.setText(R.string.name_please);
 
                 editText.setVisibility(View.VISIBLE);
                 button.setVisibility(View.VISIBLE);
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     String name = editText.getText().toString();
                     db.addUser(name, message);
-                    textView.setText("Bienvenue " + name);
+                    textView.setText(String.format("Bienvenue %s", name));
                     editText.setVisibility(View.INVISIBLE);
                     button.setVisibility(View.INVISIBLE);
                 });
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
             }
             else
             {
-                textView.setText("Id utilisateur : " + message + "\nNom utilisateur : " + db.getUserNameFromId(message));
+                textView.setText(String.format("Id utilisateur : %s\nNom utilisateur : %s", message, db.getUserNameFromId(message)));
             }
         }
     }

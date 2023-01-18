@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NewStudentClassifier</string>
+    <string name="name_please">Entrez votre nom pls</string>
 </resources>
