@@ -15,22 +15,38 @@ import android.widget.Toast;
 
 import java.nio.charset.StandardCharsets;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
+    private NfcAdapter nfcAdapter = null;
+    private DatabaseHelper db = null;
+
+    private TextView textView;
+    private EditText editText;
+    private Button button;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = new DatabaseHelper(getApplicationContext());
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        textView = findViewById(R.id.textView);
+        editText = findViewById(R.id.editText);
+        button = findViewById(R.id.button);
+
         // Vérifiez si l'appareil prend en charge NFC
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (nfcAdapter == null) {
+        if (nfcAdapter == null)
+        {
             Toast.makeText(this, "Cet appareil ne prend pas en charge NFC.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        if (!nfcAdapter.isEnabled()) {
+        if (!nfcAdapter.isEnabled())
+        {
             Toast.makeText(this, "Veuillez activer NFC.", Toast.LENGTH_LONG).show();
         }
 
@@ -39,58 +55,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
+
         // Ecoute des événements NFC
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+
+        PendingIntent pendingIntent;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S)
+        {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+        }
+        else
+        {
+            pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        }
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause()
+    {
         super.onPause();
         // Arrêt de l'écoute des événements NFC
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         nfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(Intent intent)
+    {
         super.onNewIntent(intent);
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent) {
+    private void handleIntent(Intent intent)
+    {
         String action = intent.getAction();
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action))
+        {
             // Récupération des données NFC
             Tag tag = intent.getParcelableExtra("android.nfc.extra.TAG");
-            System.out.println(tag);
             String message = new String(tag.getId(), StandardCharsets.UTF_8);
 
-            TextView textView = (TextView) findViewById(R.id.textView);
-            EditText editText = (EditText) findViewById(R.id.editText);
-            Button button = (Button) findViewById(R.id.button);
-            DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-            if(!db.checkUser(message)) {
+            if (!db.checkUser(message))
+            {
                 textView.setText("Entrez votre nom pls");
+
                 editText.setVisibility(View.VISIBLE);
                 button.setVisibility(View.VISIBLE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = editText.getText().toString();
-                        db.addUser(name, message);
-                        textView.setText("Bienvenue " + name);
-                        editText.setVisibility(View.INVISIBLE);
-                        button.setVisibility(View.INVISIBLE);
-                    }
+
+                button.setOnClickListener(v ->
+                {
+                    String name = editText.getText().toString();
+                    db.addUser(name, message);
+                    textView.setText("Bienvenue " + name);
+                    editText.setVisibility(View.INVISIBLE);
+                    button.setVisibility(View.INVISIBLE);
                 });
-            } else {
+
+            }
+            else
+            {
                 textView.setText("Id utilisateur : " + message + "\nNom utilisateur : " + db.getUserNameFromId(message));
             }
         }
