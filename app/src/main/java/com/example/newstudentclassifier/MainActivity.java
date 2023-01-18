@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,10 +72,27 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(tag);
             String message = new String(tag.getId(), StandardCharsets.UTF_8);
 
-
-            // Affichage du message
             TextView textView = (TextView) findViewById(R.id.textView);
-            textView.setText(message);
+            EditText editText = (EditText) findViewById(R.id.editText);
+            Button button = (Button) findViewById(R.id.button);
+            DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+            if(!db.checkUser(message)) {
+                textView.setText("Entrez votre nom pls");
+                editText.setVisibility(View.VISIBLE);
+                button.setVisibility(View.VISIBLE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = editText.getText().toString();
+                        db.addUser(name, message);
+                        textView.setText("Bienvenue " + name);
+                        editText.setVisibility(View.INVISIBLE);
+                        button.setVisibility(View.INVISIBLE);
+                    }
+                });
+            } else {
+                textView.setText("Id utilisateur : " + message + "\nNom utilisateur : " + db.getUserNameFromId(message));
+            }
         }
     }
 }
