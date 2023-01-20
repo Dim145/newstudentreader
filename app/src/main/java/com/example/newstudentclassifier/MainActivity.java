@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
 
         if (!nfcAdapter.isEnabled())
         {
-            Toast.makeText(this, "Veuillez activer NFC.", Toast.LENGTH_LONG).show();
+            textView.setText(R.string.activate_nfc);
         }
 
         // Gestion de l'événement de lecture NFC
@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         {
             pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         }
+
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
     }
 
