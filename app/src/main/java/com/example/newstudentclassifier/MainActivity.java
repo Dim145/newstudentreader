@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity
             else
             {
                 textView.setText(String.format("Id utilisateur : %s\nNom utilisateur : %s", message, db.getUserNameFromId(message)));
+                editText.setVisibility(View.INVISIBLE);
+                button.setVisibility(View.INVISIBLE);
             }
         }
     }
