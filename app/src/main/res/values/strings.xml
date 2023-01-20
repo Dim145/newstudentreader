@@ -3,4 +3,7 @@
     <string name="name_please">Entrez votre nom pls</string>
     <string name="activate_nfc">Veuillez activer NFC.</string>
     <string name="nfc_not_supported">NFC n\'est pas supporté sur votre appareil.</string>
+    <string name="valider">Valider</string>
+    <string name="votre_nom_ici">Votre nom ici</string>
+    <string name="aucun_message_nfc_n_a_t_lu">Aucun message NFC n\'a été lu.</string>
 </resources>
